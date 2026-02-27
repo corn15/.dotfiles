@@ -48,19 +48,6 @@
 # # Just for example:
 # resize-overlay-duration = 4s 200ms
 
-
-font-family                    = FiraCode Nerd Font Mono
-font-family                    = Symbols Nerd Font Mono
-font-family                    = PingFang SC
-
-font-feature                   = FiraCode-Retina
-font-feature                   = +zero
-# font-feature                   = +onum
-font-feature                   = calt
-font-feature                   = liga
-font-feature                   = ss13
-font-codepoint-map             = U+4E00-U+9FFF=Sarasa Mono SC Regular
-font-codepoint-map             = U+3400-U+4DBF=Sarasa Mono SC Regular
 font-size                      = 12
 font-thicken                   = true
 
