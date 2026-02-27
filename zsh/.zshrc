@@ -108,5 +108,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
-# Load alias
+# Load functions
+[ -f "$HOME/.config/zsh/function.sh" ] && source "$HOME/.config/zsh/function.sh"
+
+# Load aliases
 [ -f "$HOME/.config/zsh/alias.sh" ] && source "$HOME/.config/zsh/alias.sh"

@@ -1,4 +1,3 @@
-alias disks='echo "╓───── m o u n t . p o i n t s";echo "╙────────────────────────────────────── ─ ─ ";lsblk -a;echo "";echo "╓───── d i s k . u s a g e";echo "╙────────────────────────────────────── ─ ─ ";df -h;'
 alias rmrf="rm -rf"
 alias psef="ps -ef"
 alias mkdir="mkdir -p"
@@ -7,5 +6,11 @@ alias tree='tree -CAFa -I "CVS|*.*.package|.svn|.git|.hg|node_modules|bower_comp
 alias grep="grep -n --color"
 alias vi="nvim"
 alias vim="nvim"
-alias cat="batcat"
 alias apt="sudo apt"
+alias brew="sudo brew"
+
+if command -v batcat >/dev/null 2>&1; then
+  alias cat="batcat"
+elif command -v bat >/dev/null 2>&1; then
+  alias cat="bat"
+fi
