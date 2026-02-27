@@ -1,0 +1,136 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "edit_predictions": {
+    "provider": "zed"
+  },
+  "which_key": {
+    "enabled": true,
+  },
+  "agent": {
+    "tool_permissions": {
+      "default": "allow"
+    },
+    "inline_assistant_model": {
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4",
+    },
+    "default_profile": "ask",
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-3-pro-preview",
+    },
+  },
+  "icon_theme": "Catppuccin Mocha",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "agent_ui_font_size": 18,
+  "colorize_brackets": true,
+  "theme": {
+    "mode": "system",
+    "light": "One Light",
+    "dark": "Catppuccin Macchiato - No Italics",
+  },
+  "scrollbar": {
+    "show": "never",
+  },
+
+  "indent_guides": {
+    "enabled": true,
+    "line_width": 1,
+    "active_line_width": 1,
+    "coloring": "indent_aware",
+    "background_coloring": "disabled",
+  },
+  "toolbar": {
+    "breadcrumbs": false,
+    "quick_actions": false,
+  },
+  "title_bar": {
+    "show_branch_icon": true,
+    "show_branch_name": true,
+    "show_project_items": true,
+    "show_onboarding_banner": false,
+    "show_user_picture": true,
+    "show_sign_in": true,
+    "show_menus": false,
+  },
+  "sticky_scroll": {
+    "enabled": false,
+  },
+  "gutter": {
+    "line_numbers": true,
+    "runnables": false,
+    "breakpoints": true,
+    "folds": true,
+    "min_line_number_digits": 2,
+  },
+  "outline_panel": {
+    "button": false,
+  },
+  "git_panel": {
+    "tree_view": true,
+    "dock": "right",
+    "button": false,
+  },
+  "collaboration_panel": {
+    "button": false,
+  },
+  "notification_panel": {
+    "button": false,
+  },
+  "debugger": {
+    "dock": "left",
+  },
+  "search": {
+    "button": false,
+  },
+  "global_lsp_settings": {
+    "button": false,
+  },
+  "go_to_definition_fallback": "none",
+
+  "vim_mode": true,
+  "vim": {
+    "default_mode": "normal",
+    "use_system_clipboard": "always",
+    "toggle_relative_line_numbers": true,
+  },
+  "languages": {
+    "Python": {
+      "language_servers": ["ty", "ruff", "!pyright"],
+      "format_on_save": "on",
+      "formatter": [
+        { "code_action": "source.organizeImports.ruff" },
+        { "code_action": "source.fixAll.ruff" },
+        {
+          "language_server": {
+            "name": "ruff",
+          },
+        },
+      ],
+    },
+  },
+
+  "lsp": {
+    "ruff": {
+      "initialization_options": {
+        "settings": {
+          "organizeImports": true,
+          "lineLength": 100,
+          "lint": {
+            "extendSelect": ["I"],
+            "enable": true,
+          },
+          "fixAll": true,
+        },
+      },
+    },
+  },
+}
