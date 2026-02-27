@@ -8,30 +8,17 @@
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
   "edit_predictions": {
-    "provider": "zed"
+    "provider": "zed",
   },
   "which_key": {
     "enabled": true,
-  },
-  "agent": {
-    "tool_permissions": {
-      "default": "allow"
-    },
-    "inline_assistant_model": {
-      "provider": "zed.dev",
-      "model": "claude-sonnet-4",
-    },
-    "default_profile": "ask",
-    "default_model": {
-      "provider": "google",
-      "model": "gemini-3-pro-preview",
-    },
   },
   "icon_theme": "Catppuccin Mocha",
   "ui_font_size": 16,
   "buffer_font_size": 15,
   "agent_ui_font_size": 18,
   "colorize_brackets": true,
+  "buffer_font_fallbacks": ["Symbols Nerd Font"],
   "theme": {
     "mode": "system",
     "light": "One Light",
@@ -76,8 +63,26 @@
   },
   "git_panel": {
     "tree_view": true,
-    "dock": "right",
+    "dock": "left",
     "button": false,
+  },
+  "agent": {
+    "inline_assistant_use_streaming_tools": true,
+    "enabled": true,
+    "button": true,
+    "dock": "right",
+    "tool_permissions": {
+      "default": "allow",
+    },
+    "inline_assistant_model": {
+      "provider": "zed.dev",
+      "model": "claude-sonnet-4",
+    },
+    "default_profile": "ask",
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-3-pro-preview",
+    },
   },
   "collaboration_panel": {
     "button": false,
