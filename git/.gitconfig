@@ -1,0 +1,9 @@
+[user]
+  name = corn
+  email = ymc.corn@gmail.com
+
+[init]
+  defaultBranch = main
+
+[fetch]
+  prune = true

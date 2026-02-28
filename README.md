@@ -13,6 +13,8 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
   - `~/.config/zed/settings.json`
   - `~/.config/zed/keymap.json`
   - `~/.config/zed/tasks.json`
+- `git`
+  - `~/.gitconfig`
 
 ## Prerequisites
 
@@ -53,7 +55,7 @@ From the repo root:
 
 ## Notes
 
-- `zsh/.zshrc` sets `ZSH_THEME="corn"`. If you don't have that theme, either add
+- `zsh/.config/zsh/oh-my-zsh.sh` sets `ZSH_THEME="corn"`. If you don't have that theme, either add
   `~/.oh-my-zsh/custom/themes/corn.zsh-theme` or change `ZSH_THEME` to an existing one.
 
 ## Update
@@ -69,5 +71,5 @@ zsh bootstrap.sh
 From the repo root:
 
 ```bash
-stow --target="$HOME" -D zsh ghostty zed
+stow --target="$HOME" -D zsh ghostty zed git
 ```
