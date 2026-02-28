@@ -2,20 +2,6 @@
 
 Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
-## What's included
-
-- `zsh`
-  - `~/.zshrc`
-  - `~/.config/zsh/alias.sh`
-- `ghostty`
-  - `~/.config/ghostty/config`
-- `zed`
-  - `~/.config/zed/settings.json`
-  - `~/.config/zed/keymap.json`
-  - `~/.config/zed/tasks.json`
-- `git`
-  - `~/.gitconfig`
-
 ## Prerequisites
 
 - `git`
