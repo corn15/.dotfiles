@@ -107,6 +107,34 @@
     "use_system_clipboard": "always",
     "toggle_relative_line_numbers": true,
   },
+
+  "terminal": {
+    "shell": {
+      "with_arguments": {
+        "program": "/bin/zsh",
+        // Use a login shell so $HOME expands reliably, then replace zsh with the
+        // wrapper and forward any extra args from Zed unchanged via "$@".
+        "args": [
+          "-lc",
+          "exec \"$HOME/.config/zed/bin/terminal-wrapper\" \"$@\"",
+          "terminal-wrapper",
+        ],
+      },
+    },
+  },
+
+  "agent_servers": {
+    "claude-acp": {
+      "type": "registry",
+    },
+    "gemini": {
+      "type": "registry",
+    },
+    "codex-acp": {
+      "type": "registry",
+    },
+  },
+
   "languages": {
     "Python": {
       "language_servers": ["ty", "ruff", "!pyright"],

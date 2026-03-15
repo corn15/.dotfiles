@@ -1,0 +1,47 @@
+#!/bin/sh
+set -eu
+
+REAL_SHELL="${ZED_TERMINAL_FALLBACK_SHELL:-/bin/zsh}"
+
+# If this wrapper is launched through `sh -c`, the shell command must forward
+# `"$@"` so task and agent invocations keep their original arguments.
+# Pass through non-interactive invocations (eg task shells with args).
+if [ "$#" -gt 0 ]; then
+  exec "$REAL_SHELL" "$@"
+fi
+
+# Attach is only meaningful for interactive terminals.
+if [ ! -t 0 ] || [ ! -t 1 ]; then
+  exec "$REAL_SHELL"
+fi
+
+# Avoid nested zellij sessions.
+if [ -n "${ZELLIJ:-}" ] || [ -n "${ZELLIJ_SESSION_NAME:-}" ]; then
+  exec "$REAL_SHELL"
+fi
+
+# Only attach for directories inside a git repository.
+if ! command -v git >/dev/null 2>&1; then
+  exec "$REAL_SHELL"
+fi
+
+if ! repo_root="$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null)"; then
+  exec "$REAL_SHELL"
+fi
+
+project_name="$(basename "$repo_root")"
+session_name="$(printf '%s' "$project_name" | tr '[:space:]' '-' | tr -cd '[:alnum:]_.-')"
+
+if [ -z "$session_name" ]; then
+  session_name="project"
+fi
+
+if command -v zellij >/dev/null 2>&1; then
+  # If attach fails, fall back to a regular shell instead of exiting.
+  if zellij attach -c "$session_name"; then
+    :
+  fi
+fi
+
+# Keep terminal usable after detach or if zellij is unavailable.
+exec "$REAL_SHELL"
