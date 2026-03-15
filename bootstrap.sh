@@ -78,7 +78,7 @@ configure_git_identity() {
   git config --global user.email "$email"
 }
 
-packages=(zsh ghostty zed git)
+packages=(zsh ghostty zed git zellij)
 selected_packages=()
 
 for pkg in "${packages[@]}"; do
