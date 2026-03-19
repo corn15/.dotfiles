@@ -109,6 +109,8 @@
   },
 
   "terminal": {
+    "font_family": "0xProto Nerd Font Mono",
+    "font_fallbacks": ["Hasklug Nerd Font Mono"],
     "shell": {
       "with_arguments": {
         "program": "/bin/zsh",
