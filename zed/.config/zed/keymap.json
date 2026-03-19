@@ -147,6 +147,7 @@
       "ctrl-p": null,
       "ctrl-o": null,
       "ctrl-q": null,
+      "ctrl-s": null,
 
       "ctrl-up": "vim::ResizePaneUp",
       "ctrl-down": "vim::ResizePaneDown",
