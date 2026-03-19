@@ -1,2 +1,2 @@
-# Initialize Starship after Oh My Zsh so plugins still load, but prompt rendering stays with Starship.
+# Initialize Starship prompt.
 eval "$(starship init zsh)"

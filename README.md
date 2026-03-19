@@ -13,17 +13,17 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
 
 From the repo root:
 
-1. Install (or update) Oh My Zsh and plugins:
+1. Install (or update) Starship and standalone Zsh plugins:
 
    ```bash
    zsh install.sh
    ```
 
-   This will clone/update:
-   - `~/.oh-my-zsh`
-   - `~/.oh-my-zsh/custom/plugins/zsh-completions`
-   - `~/.oh-my-zsh/custom/plugins/zsh-autosuggestions`
-   - `~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
+   This will install/update Starship and clone/update:
+   - `starship` into the current `starship` binary directory, or `/usr/local/bin` by default
+   - `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins/zsh-completions`
+   - `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins/zsh-autosuggestions`
+   - `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins/zsh-syntax-highlighting`
 
 2. Symlink configs into `$HOME` using stow:
 
@@ -44,8 +44,7 @@ From the repo root:
 
 ## Notes
 
-- `zsh/.config/zsh/oh-my-zsh.sh` sets `ZSH_THEME="corn"`. If you don't have that theme, either add
-  `~/.oh-my-zsh/custom/themes/corn.zsh-theme` or change `ZSH_THEME` to an existing one.
+- `zsh/.config/zsh/plugins.sh` adds `zsh-completions` to `fpath`, runs `compinit`, and sources the standalone Zsh plugins.
 - `zed/.config/zed/bin/terminal-wrapper` will auto-attach to a per-project `zellij` session when
   `zellij` is installed. The default `zellij` config lives at `zellij/.config/zellij/config.kdl`.
 
