@@ -11,3 +11,6 @@
 
 # Load aliases last so they can override plugin aliases.
 [ -f "$HOME/.config/zsh/alias.sh" ] && source "$HOME/.config/zsh/alias.sh"
+
+# Load prompt setup last so prompt rendering can override earlier shell defaults.
+[ -f "$HOME/.config/zsh/prompt.sh" ] && source "$HOME/.config/zsh/prompt.sh"

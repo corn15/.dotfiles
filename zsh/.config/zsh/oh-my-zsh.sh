@@ -1,6 +1,7 @@
 # Oh My Zsh bootstrap.
 export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="corn"
+# Keep Oh My Zsh for plugins/completions only. Prompt rendering is handled by Starship.
+ZSH_THEME=""
 
 plugins=(
   git

@@ -1,0 +1,34 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+format = """
+[󰞸](bold yellow) $all$fill$cmd_duration$time$line_break$character"""
+
+[fill]
+symbol = " "
+
+[character]
+success_symbol = '[❯](bold green) '
+error_symbol = '[✗](bold red) '
+
+
+# Configure the time module (optional: customize format/style)
+[time]
+disabled = false
+# time_format = "%R" # Example for 24-hour format (14:30)
+format = '[\[$time\]]($style) '
+style = "yellow"
+
+# Configure the command duration module (optional: customize format/threshold)
+[cmd_duration]
+disabled = false
+# min_time = 2000 # Only show for commands > 2 seconds
+format = '[🕙$duration]($style) '
+style = "aqua"
+
+# Disable the package module, hiding it from the prompt completely
+[package]
+disabled = true
