@@ -5,7 +5,22 @@
 add_newline = true
 
 format = """
-[󰞸](bold yellow) $all$fill$cmd_duration$time$line_break$character"""
+[󰞸](bold yellow) \
+$username\
+$hostname\
+$localip\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_metrics\
+$git_status\
+$sudo\
+$fill\
+$cmd_duration\
+$time\
+$line_break\
+$character"""
 
 [fill]
 symbol = " "
@@ -14,21 +29,15 @@ symbol = " "
 success_symbol = '[❯](bold green) '
 error_symbol = '[✗](bold red) '
 
-
 # Configure the time module (optional: customize format/style)
 [time]
 disabled = false
-# time_format = "%R" # Example for 24-hour format (14:30)
 format = '[\[$time\]]($style) '
 style = "yellow"
 
 # Configure the command duration module (optional: customize format/threshold)
 [cmd_duration]
 disabled = false
-# min_time = 2000 # Only show for commands > 2 seconds
-format = '[🕙$duration]($style) '
-style = "aqua"
-
-# Disable the package module, hiding it from the prompt completely
-[package]
-disabled = true
+min_time = 2000 # Only show for commands > 2 seconds
+format = '[◷ $duration]($style) '
+style = "bright-black"
