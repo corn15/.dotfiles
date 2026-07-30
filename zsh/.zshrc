@@ -12,5 +12,10 @@
 # Load prompt setup before plugin widgets are finalized.
 [ -f "$HOME/.config/zsh/prompt.sh" ] && source "$HOME/.config/zsh/prompt.sh"
 
-# Load plugins last so completion is initialized and syntax highlighting can wrap final widgets.
+# Load plugins after prompt setup so completion is initialized and syntax highlighting can wrap widgets.
 [ -f "$HOME/.config/zsh/plugins.sh" ] && source "$HOME/.config/zsh/plugins.sh"
+
+# Load key bindings after plugins so custom bindings win.
+[ -f "$HOME/.config/zsh/keybindings.sh" ] && source "$HOME/.config/zsh/keybindings.sh"
+
+
