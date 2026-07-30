@@ -26,7 +26,6 @@
       "ctrl-tab": "tab_switcher::Toggle",
     },
   },
-
   // personalized vim keymap
   {
     "context": "Editor && (vim_mode == normal || vim_mode == visual || vim_mode == insert)",
@@ -47,11 +46,9 @@
       "enter": ["workspace::SendKeystrokes", "o escape"],
       "shift-enter": ["workspace::SendKeystrokes", "shift-o escape"],
       "ctrl-c": ["workspace::SendKeystrokes", "c i w"],
-
       "ctrl-s": "workspace::SaveAll",
       "ctrl-u": ["workspace::SendKeystrokes", "ctrl-u z z"],
       "ctrl-d": ["workspace::SendKeystrokes", "ctrl-d z z"],
-
       "space x q": "diagnostics::Deploy",
     },
   },
@@ -62,7 +59,6 @@
       // Fix for Zed: vim::RestoreVisualSelection adds an extra line,
       // so we move up one line with `k` after reselecting (gv and `>)
       "shift-c": ["workspace::SendKeystrokes", "y g v k g c ` > k p"], // ygvgc`>p
-
       "ctrl-s": ["workspace::SendKeystrokes", "escape ctrl-s"],
     },
   },
@@ -97,7 +93,6 @@
       "shift-l": "vim::EndOfLine",
     },
   },
-
   // window/pane/panel management
   {
     "context": "Editor || ProjectPanel || DebugPanel || GitPanel || AgentPanel",
@@ -106,13 +101,12 @@
       "ctrl-l": "workspace::ActivatePaneRight",
       "ctrl-k": "workspace::ActivatePaneUp",
       "ctrl-j": "workspace::ActivatePaneDown",
-
       "ctrl-right": "vim::ResizePaneRight",
       "ctrl-left": "vim::ResizePaneLeft",
       "ctrl-up": "vim::ResizePaneUp",
       "ctrl-down": "vim::ResizePaneDown",
-
       "ctrl-space": "workspace::ToggleZoom",
+      "ctrl-`": "multi_workspace::ToggleWorkspaceSidebar",
     },
   },
   {
@@ -120,7 +114,6 @@
     "bindings": {
       "space |": "pane::SplitRight",
       "space -": "pane::SplitDown",
-
       "space w d": "pane::CloseActiveItem",
     },
   },
@@ -131,7 +124,6 @@
   //     "ctrl-left": "vim::ResizePaneLeft",
   //     "ctrl-up": "vim::ResizePaneUp",
   //     "ctrl-down": "vim::ResizePaneDown",
-
   //     "ctrl-h": "workspace::ActivatePaneLeft",
   //     "ctrl-l": "workspace::ActivatePaneRight",
   //     "ctrl-k": "workspace::ActivatePaneUp",
@@ -143,26 +135,21 @@
     "bindings": {
       "ctrl-k": "workspace::ActivatePaneUp",
       "ctrl-j": null,
-
       "ctrl-p": null,
       "ctrl-o": null,
       "ctrl-q": null,
       "ctrl-s": null,
-
       "ctrl-up": "vim::ResizePaneUp",
       "ctrl-down": "vim::ResizePaneDown",
-
       "ctrl-space": "workspace::ToggleZoom",
     },
   },
-
   // buffer management
   {
     "context": "Editor && vim_mode == normal",
     "bindings": {
       "space b d": "pane::CloseActiveItem",
       "space b o": "pane::CloseOtherItems",
-
       "space b j": [
         "workspace::MoveItemToPaneInDirection",
         { "direction": "down" },
@@ -181,7 +168,6 @@
       ],
     },
   },
-
   // file explorer
   {
     "context": "Editor && vim_mode == normal",
@@ -196,7 +182,6 @@
       "ctrl-/": "workspace::ToggleBottomDock",
       "space e": "workspace::ToggleLeftDock",
       "alt-d": "debug_panel::ToggleFocus",
-
       "a": "project_panel::NewFile",
       "A": "project_panel::NewDirectory",
       "r": "project_panel::Rename",
@@ -206,7 +191,6 @@
       "p": "project_panel::Paste",
     },
   },
-
   // debugger
   {
     "context": "Editor && vim_mode == normal",
@@ -228,14 +212,12 @@
     "bindings": {
       "space d d": "debugger::Start",
       "space d shift-d": "debugger::Stop",
-
       "space d up": "debugger::Continue",
       "space d down": "debugger::StepOver",
       "space d right": "debugger::StepInto",
       "space d left": "debugger::StepOut",
     },
   },
-
   // outline
   {
     "context": "Editor && vim_mode == normal",
@@ -243,7 +225,6 @@
       "g s": "outline::Toggle",
     },
   },
-
   // terminal
   {
     "context": "Editor && vim_mode == normal",
@@ -255,18 +236,16 @@
     "context": "Terminal",
     "bindings": {
       "ctrl-/": "workspace::ToggleBottomDock",
-
       "ctrl-n": "workspace::NewTerminal",
-
       "ctrl-[": "pane::ActivatePreviousItem",
       "ctrl-]": "pane::ActivateNextItem",
     },
   },
-
   // ai
   {
     "context": "Editor && (vim_mode == normal || vim_mode == visual)",
     "bindings": {
+      "ctrl-`": "multi_workspace::ToggleWorkspaceSidebar",
       "space a a": "workspace::ToggleRightDock",
       "space a i": "assistant::InlineAssist",
     },
@@ -284,7 +263,8 @@
       "space a n": "agent::ToggleNewThreadMenu",
       "space a p": "agent::ToggleProfileSelector",
       "space a shift-m": "agent::ToggleModelSelector",
-      "space a h": "agent::OpenHistory",
+
+      "ctrl-`": "multi_workspace::ToggleWorkspaceSidebar",
     },
   },
   {
@@ -295,10 +275,33 @@
       "space a n": "agent::ToggleNewThreadMenu",
       "space a p": "agent::ToggleProfileSelector",
       "space a shift-m": "agent::ToggleModelSelector",
-      "space a h": "agent::OpenHistory",
       "space a m": "agent::ToggleThinkingEffortMenu",
-      // "space a m": "agent::ToggleThinkingMode",
-      // "space a m": "agent::CycleThinkingEffort",
+
+      "ctrl-`": "multi_workspace::ToggleWorkspaceSidebar",
+    },
+  },
+  {
+    // in ThreadSidebar
+    "context": "ThreadsSidebar",
+    "use_key_equivalents": true,
+    "bindings": {
+      "ctrl-`": "multi_workspace::ToggleWorkspaceSidebar",
+      "left": "menu::SelectParent",
+      "right": "menu::SelectChild",
+      "enter": "menu::Confirm",
+    },
+  },
+  {
+    "context": "ThreadsSidebar && not_searching",
+    "use_key_equivalents": true,
+    "bindings": {
+      "a": "agents_sidebar::NewThreadInGroup",
+      "d": "agent::RemoveSelectedThread",
+      "r": "agent::ArchiveSelectedThread",
+      "h": "agents_sidebar::ToggleThreadHistory",
+      "p": ["projects::OpenRecent", { "create_new_window": false }],
+      "/": "agents_sidebar::FocusSidebarFilter",
+      "space": "menu::Confirm",
     },
   },
   {
@@ -310,7 +313,7 @@
     },
   },
   {
-    "context": "Editor && edit_prediction_conflict",
+    "context": "Editor && (edit_prediction && (showing_completions || in_leading_whitespace))",
     "bindings": {
       "tab": "editor::Tab",
       "alt-a": "editor::AcceptEditPrediction",
@@ -336,7 +339,6 @@
       "alt-shift-n": "agent::RejectAll",
     },
   },
-
   {
     "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
     "bindings": {

@@ -7,6 +7,12 @@
 // custom settings, run `zed: open default settings` from the
 // command palette (cmd-shift-p / ctrl-shift-p)
 {
+  "disable_ai": false,
+  "diff_view_style": "split",
+  "cli_default_open_behavior": "new_window",
+  "project_panel": {
+    "dock": "left"
+  },
   "edit_predictions": {
     "provider": "zed",
   },
@@ -40,7 +46,7 @@
     "quick_actions": false,
   },
   "title_bar": {
-    "show_branch_icon": true,
+    "show_branch_status_icon": true,
     "show_branch_name": true,
     "show_project_items": true,
     "show_onboarding_banner": false,
@@ -59,6 +65,7 @@
     "min_line_number_digits": 2,
   },
   "outline_panel": {
+    "dock": "left",
     "button": false,
   },
   "git_panel": {
@@ -67,6 +74,7 @@
     "button": false,
   },
   "agent": {
+    "sidebar_side": "left",
     "inline_assistant_use_streaming_tools": true,
     "enabled": true,
     "button": true,
@@ -78,18 +86,19 @@
       "provider": "zed.dev",
       "model": "claude-sonnet-4",
     },
-    "default_profile": "ask",
+    "default_profile": "write",
     "default_model": {
-      "provider": "google",
-      "model": "gemini-3-pro-preview",
+      "effort": "xhigh",
+      "enable_thinking": true,
+      "provider": "openai-subscribed",
+      "model": "gpt-5.5",
     },
   },
   "collaboration_panel": {
+    "dock": "left",
     "button": false,
   },
-  "notification_panel": {
-    "button": false,
-  },
+
   "debugger": {
     "dock": "left",
   },
@@ -127,12 +136,23 @@
 
   "agent_servers": {
     "claude-acp": {
+      "default_config_options": {
+        "mode": "bypassPermissions",
+        "effort": "xhigh",
+        "model": "opus[1m]"
+      },
       "type": "registry",
     },
     "gemini": {
       "type": "registry",
     },
     "codex-acp": {
+      "default_config_options": {
+        "fast-mode": false,
+        "mode": "agent-full-access",
+        "reasoning_effort": "xhigh",
+        "model": "gpt-5.5"
+      },
       "type": "registry",
     },
   },
