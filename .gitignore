@@ -6,3 +6,6 @@
 
 # Ignore environment variables
 .env
+
+# Ignore machine-local zsh config
+zsh/.config/zsh/local.sh
