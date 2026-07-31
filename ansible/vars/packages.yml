@@ -10,6 +10,8 @@ darwin_cli_packages:
   - ripgrep
   - starship
   - mise
+  - neovim
+  - lazygit
 
 darwin_desktop_apps:
   - name: zed
@@ -25,6 +27,7 @@ ubuntu_cli_packages:
   - zoxide
   - bat
   - ripgrep
+  - unzip
 
 ubuntu_desktop_apps:
   - zed

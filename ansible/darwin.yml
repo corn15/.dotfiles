@@ -1,0 +1,37 @@
+---
+- name: Install macOS dotfiles tools
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    dotfiles_profile: "{{ profile | default('cli') }}"
+    dotfiles_update_enabled: "{{ dotfiles_update | default(false) | bool }}"
+
+  vars_files:
+    - vars/packages.yml
+
+  pre_tasks:
+    - name: Validate profile
+      ansible.builtin.assert:
+        that:
+          - dotfiles_profile in ['cli', 'desktop']
+        fail_msg: "profile must be cli or desktop"
+
+    - name: Validate macOS
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['system'] == 'Darwin'
+        fail_msg: "This playbook only supports macOS."
+
+  tasks:
+    - name: Install macOS CLI packages
+      ansible.builtin.import_tasks: tasks/packages_darwin.yml
+
+    - name: Install Zsh plugins
+      ansible.builtin.import_tasks: tasks/zsh_plugins.yml
+
+    - name: Install macOS desktop apps
+      ansible.builtin.import_tasks: tasks/desktop_apps_darwin.yml
+      when: dotfiles_profile == 'desktop'

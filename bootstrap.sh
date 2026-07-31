@@ -1,38 +1,32 @@
 #!/usr/bin/env zsh
 set -euo pipefail
 
-command -v stow >/dev/null 2>&1 || {
-  echo "error: missing required command: stow" >&2
-  exit 1
-}
-
 ROOT_DIR="$(cd -- "$(dirname -- "$0")" && pwd)"
+source "$ROOT_DIR/lib/common.sh"
+
+command -v stow >/dev/null 2>&1 || error "missing required command: stow"
+
 cd "$ROOT_DIR"
 
-prompt_yn() {
+prompt_value() {
   local prompt="$1"
-  local default_yes="${2:-0}"
-  local reply=""
+  local default_value="$2"
+  local value=""
 
   while true; do
-    if [ "$default_yes" = "1" ]; then
-      printf "%s [Y/n] " "$prompt"
+    if [ -n "$default_value" ]; then
+      printf "%s [%s]: " "$prompt" "$default_value"
     else
-      printf "%s [y/N] " "$prompt"
+      printf "%s: " "$prompt"
     fi
 
-    IFS= read -r reply || return 1
-    reply="${reply:l}"
+    IFS= read -r value || return 1
+    [ -z "$value" ] && value="$default_value"
 
-    if [ -z "$reply" ]; then
-      [ "$default_yes" = "1" ] && return 0 || return 1
+    if [ -n "$value" ]; then
+      printf '%s\n' "$value"
+      return 0
     fi
-
-    case "$reply" in
-      y|yes) return 0 ;;
-      n|no) return 1 ;;
-      *) echo "Please answer y or n." ;;
-    esac
   done
 }
 
@@ -42,59 +36,57 @@ configure_git_identity() {
     return 0
   }
 
-  echo "Git config: setting user.name and user.email (git package not bootstrapped)"
-
+  local git_config_file="$ROOT_DIR/git/.gitconfig"
   local current_name=""
   local current_email=""
   local name=""
   local email=""
 
-  current_name="$(git config --global --get user.name 2>/dev/null || true)"
-  current_email="$(git config --global --get user.email 2>/dev/null || true)"
+  current_name="$(git config --file "$git_config_file" --get user.name 2>/dev/null || true)"
+  current_email="$(git config --file "$git_config_file" --get user.email 2>/dev/null || true)"
 
-  while [ -z "$name" ]; do
-    if [ -n "$current_name" ]; then
-      printf "Git user.name [%s]: " "$current_name"
-    else
-      printf "Git user.name: "
-    fi
+  echo "Git identity in git/.gitconfig:"
+  echo "  user.name: ${current_name:-<unset>}"
+  echo "  user.email: ${current_email:-<unset>}"
 
-    IFS= read -r name || return 1
-    [ -z "$name" ] && name="$current_name"
-  done
+  if ! prompt_yn "Update git identity?" 0; then
+    return 0
+  fi
 
-  while [ -z "$email" ]; do
-    if [ -n "$current_email" ]; then
-      printf "Git user.email [%s]: " "$current_email"
-    else
-      printf "Git user.email: "
-    fi
+  name="$(prompt_value "Git user.name" "$current_name")"
+  email="$(prompt_value "Git user.email" "$current_email")"
 
-    IFS= read -r email || return 1
-    [ -z "$email" ] && email="$current_email"
-  done
-
-  git config --global user.name "$name"
-  git config --global user.email "$email"
+  git config --file "$git_config_file" user.name "$name"
+  git config --file "$git_config_file" user.email "$email"
 }
 
-packages=(zsh ghostty zed git zellij)
-selected_packages=()
+remove_identical_existing_target() {
+  local source_path="$1"
+  local target_path="$2"
+
+  [ -e "$source_path" ] || return 0
+  [ -e "$target_path" ] || return 0
+  [ -L "$target_path" ] && return 0
+
+  if diff -qr "$source_path" "$target_path" >/dev/null 2>&1; then
+    rm -rf "$target_path"
+    return 0
+  fi
+
+  error "$target_path already exists and differs from $source_path; move it aside before bootstrapping"
+}
+
+prepare_stow_targets() {
+  remove_identical_existing_target "$ROOT_DIR/nvim/.config/nvim" "$HOME/.config/nvim"
+}
+
+packages=(zsh ghostty zed git zellij nvim)
 
 for pkg in "${packages[@]}"; do
-  [ -d "$pkg" ] || continue
-
-  if prompt_yn "Bootstrap $pkg?" 1; then
-    selected_packages+=("$pkg")
-  fi
+  [ -d "$pkg" ] || error "missing stow package: $pkg"
 done
 
-if [[ " ${selected_packages[*]} " != *" git "* ]]; then
-  configure_git_identity
-fi
+configure_git_identity
+prepare_stow_targets
 
-if [ "${#selected_packages[@]}" -gt 0 ]; then
-  stow --target="$HOME" --restow "${selected_packages[@]}"
-else
-  echo "No packages selected; skipping stow."
-fi
+stow --target="$HOME" --restow "${packages[@]}"

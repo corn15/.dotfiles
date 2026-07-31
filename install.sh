@@ -77,6 +77,31 @@ ensure_ansible() {
   command -v ansible-playbook >/dev/null 2>&1 || error "ansible-playbook is still unavailable after installation"
 }
 
+select_playbook() {
+  os_name=$(uname -s)
+  case "$os_name" in
+    Darwin)
+      printf '%s\n' "$ROOT_DIR/ansible/darwin.yml"
+      ;;
+    Linux)
+      if [ -r /etc/os-release ]; then
+        . /etc/os-release
+      else
+        error "cannot detect Linux distribution"
+      fi
+
+      if [ "${ID:-}" = "ubuntu" ]; then
+        printf '%s\n' "$ROOT_DIR/ansible/ubuntu.yml"
+      else
+        error "only Ubuntu is supported for Linux installs"
+      fi
+      ;;
+    *)
+      error "unsupported OS: $os_name"
+      ;;
+  esac
+}
+
 profile="cli"
 dotfiles_update="false"
 
@@ -103,7 +128,7 @@ done
 
 validate_profile "$profile"
 
-PLAYBOOK="$ROOT_DIR/ansible/playbook.yml"
+PLAYBOOK=$(select_playbook)
 
 ensure_ansible
 

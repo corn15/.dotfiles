@@ -49,6 +49,8 @@ The `cli` profile installs:
 - `starship`
 - `zellij`
 - `mise`
+- `neovim`
+- `lazygit`
 - standalone Zsh plugins used by `zsh/.config/zsh/plugins.sh`
 
 The `desktop` profile also installs:
@@ -82,5 +84,5 @@ Package-manager updates are still owned by each platform package manager, such a
 From the repo root:
 
 ```bash
-stow --target="$HOME" -D zsh ghostty zed git zellij
+stow --target="$HOME" -D zsh ghostty zed git zellij nvim
 ```

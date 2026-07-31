@@ -44,3 +44,83 @@
     tar -xzf "$tmp_dir/zellij.tar.gz" -C "$tmp_dir"
     install -m 0755 "$tmp_dir/zellij" "{{ ansible_facts['env']['HOME'] }}/.local/bin/zellij"
   when: (not (zellij_user_bin.stat.exists | default(false))) or dotfiles_update_enabled
+
+- name: Check user-local Neovim
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/nvim/bin/nvim"
+  register: neovim_user_bin
+
+- name: Install or update latest Neovim on Ubuntu
+  ansible.builtin.shell:
+    cmd: |
+      set -eu
+
+      arch="$(uname -m)"
+      case "$arch" in
+        x86_64|amd64)
+          target="nvim-linux-x86_64"
+          ;;
+        aarch64|arm64)
+          target="nvim-linux-arm64"
+          ;;
+        *)
+          echo "unsupported neovim architecture: $arch" >&2
+          exit 1
+          ;;
+      esac
+
+      tmp_dir="$(mktemp -d)"
+      trap 'rm -rf "$tmp_dir"' EXIT
+
+      curl -fsSL -o "$tmp_dir/nvim.tar.gz" "https://github.com/neovim/neovim/releases/latest/download/${target}.tar.gz"
+      tar -xzf "$tmp_dir/nvim.tar.gz" -C "$tmp_dir"
+      rm -rf "{{ ansible_facts['env']['HOME'] }}/.local/nvim"
+      mv "$tmp_dir/$target" "{{ ansible_facts['env']['HOME'] }}/.local/nvim"
+  when: (not (neovim_user_bin.stat.exists | default(false))) or dotfiles_update_enabled
+
+- name: Link user-local Neovim
+  ansible.builtin.file:
+    src: "{{ ansible_facts['env']['HOME'] }}/.local/nvim/bin/nvim"
+    dest: "{{ ansible_facts['env']['HOME'] }}/.local/bin/nvim"
+    state: link
+    force: true
+
+- name: Check user-local Lazygit
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin/lazygit"
+  register: lazygit_user_bin
+
+- name: Install or update latest Lazygit on Ubuntu
+  ansible.builtin.shell:
+    cmd: |
+      set -eu
+
+      arch="$(uname -m)"
+      case "$arch" in
+        x86_64|amd64)
+          target="Linux_x86_64"
+          ;;
+        aarch64|arm64)
+          target="Linux_arm64"
+          ;;
+        *)
+          echo "unsupported lazygit architecture: $arch" >&2
+          exit 1
+          ;;
+      esac
+
+      tmp_dir="$(mktemp -d)"
+      trap 'rm -rf "$tmp_dir"' EXIT
+
+      latest_json="$(curl -fsSL https://api.github.com/repos/jesseduffield/lazygit/releases/latest)"
+      version="$(printf '%s\n' "$latest_json" | sed -n 's/.*"tag_name": "v\([^"]*\)".*/\1/p' | head -n 1)"
+
+      if [ -z "$version" ]; then
+        echo "could not determine latest lazygit version" >&2
+        exit 1
+      fi
+
+      curl -fsSL -o "$tmp_dir/lazygit.tar.gz" "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${version}_${target}.tar.gz"
+      tar -xzf "$tmp_dir/lazygit.tar.gz" -C "$tmp_dir"
+      install -m 0755 "$tmp_dir/lazygit" "{{ ansible_facts['env']['HOME'] }}/.local/bin/lazygit"
+  when: (not (lazygit_user_bin.stat.exists | default(false))) or dotfiles_update_enabled
