@@ -9,3 +9,6 @@
 
 # Ignore machine-local zsh config
 zsh/.config/zsh/local.sh
+
+# Ignore machine-local git identity
+git/.gitconfig.local

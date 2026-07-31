@@ -1,6 +1,5 @@
-[user]
-  name = corn
-  email = ymc.corn@gmail.com
+[include]
+  path = ~/.gitconfig.local
 
 [init]
   defaultBranch = main
@@ -9,4 +8,4 @@
   prune = true
 
 [core]
-    editor = nvim
+  editor = nvim

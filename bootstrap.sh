@@ -36,16 +36,21 @@ configure_git_identity() {
     return 0
   }
 
-  local git_config_file="$ROOT_DIR/git/.gitconfig"
+  local git_config_file="$ROOT_DIR/git/.gitconfig.local"
+  local git_config_example="$ROOT_DIR/git/.gitconfig.local.example"
   local current_name=""
   local current_email=""
   local name=""
   local email=""
 
+  if [ ! -f "$git_config_file" ]; then
+    cp "$git_config_example" "$git_config_file"
+  fi
+
   current_name="$(git config --file "$git_config_file" --get user.name 2>/dev/null || true)"
   current_email="$(git config --file "$git_config_file" --get user.email 2>/dev/null || true)"
 
-  echo "Git identity in git/.gitconfig:"
+  echo "Git identity in git/.gitconfig.local:"
   echo "  user.name: ${current_name:-<unset>}"
   echo "  user.email: ${current_email:-<unset>}"
 
