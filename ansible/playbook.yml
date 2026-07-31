@@ -1,0 +1,54 @@
+---
+- name: Install dotfiles tools
+  hosts: localhost
+  connection: local
+  gather_facts: true
+
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    dotfiles_profile: "{{ profile | default('cli') }}"
+    dotfiles_update_enabled: "{{ dotfiles_update | default(false) | bool }}"
+
+  vars_files:
+    - vars/packages.yml
+
+  pre_tasks:
+    - name: Validate profile
+      ansible.builtin.assert:
+        that:
+          - dotfiles_profile in ['cli', 'desktop']
+        fail_msg: "profile must be cli or desktop"
+
+    - name: Validate supported OS
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['system'] == 'Darwin' or ansible_facts['distribution'] == 'Ubuntu'
+        fail_msg: "Only macOS and Ubuntu are supported by this playbook."
+
+  tasks:
+    - name: Install macOS CLI packages
+      ansible.builtin.import_tasks: tasks/packages_darwin.yml
+      when: ansible_facts['system'] == 'Darwin'
+
+    - name: Install Ubuntu CLI packages
+      ansible.builtin.import_tasks: tasks/packages_ubuntu.yml
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Ubuntu standalone shell tools
+      ansible.builtin.import_tasks: tasks/shell_tools_ubuntu.yml
+      when: ansible_facts['distribution'] == 'Ubuntu'
+
+    - name: Install Zsh plugins
+      ansible.builtin.import_tasks: tasks/zsh_plugins.yml
+
+    - name: Install macOS desktop apps
+      ansible.builtin.import_tasks: tasks/desktop_apps_darwin.yml
+      when:
+        - ansible_facts['system'] == 'Darwin'
+        - dotfiles_profile == 'desktop'
+
+    - name: Install Ubuntu desktop apps
+      ansible.builtin.import_tasks: tasks/desktop_apps_ubuntu.yml
+      when:
+        - ansible_facts['distribution'] == 'Ubuntu'
+        - dotfiles_profile == 'desktop'

@@ -1,0 +1,46 @@
+---
+- name: Ensure user local bin exists
+  ansible.builtin.file:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin"
+    state: directory
+    mode: "0755"
+
+- name: Check user-local Starship
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin/starship"
+  register: starship_user_bin
+
+- name: Install or update Starship on Ubuntu
+  ansible.builtin.shell: curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "{{ ansible_facts['env']['HOME'] }}/.local/bin"
+  when: (not (starship_user_bin.stat.exists | default(false))) or dotfiles_update_enabled
+
+- name: Check user-local Zellij
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/bin/zellij"
+  register: zellij_user_bin
+
+- name: Install or update latest Zellij on Ubuntu
+  ansible.builtin.shell: |
+    set -eu
+
+    arch="$(uname -m)"
+    case "$arch" in
+      x86_64|amd64)
+        target="x86_64-unknown-linux-musl"
+        ;;
+      aarch64|arm64)
+        target="aarch64-unknown-linux-musl"
+        ;;
+      *)
+        echo "unsupported zellij architecture: $arch" >&2
+        exit 1
+        ;;
+    esac
+
+    tmp_dir="$(mktemp -d)"
+    trap 'rm -rf "$tmp_dir"' EXIT
+
+    curl -fsSL -o "$tmp_dir/zellij.tar.gz" "https://github.com/zellij-org/zellij/releases/latest/download/zellij-${target}.tar.gz"
+    tar -xzf "$tmp_dir/zellij.tar.gz" -C "$tmp_dir"
+    install -m 0755 "$tmp_dir/zellij" "{{ ansible_facts['env']['HOME'] }}/.local/bin/zellij"
+  when: (not (zellij_user_bin.stat.exists | default(false))) or dotfiles_update_enabled

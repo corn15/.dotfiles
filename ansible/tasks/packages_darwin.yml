@@ -1,0 +1,27 @@
+---
+- name: Check Homebrew CLI packages
+  ansible.builtin.command:
+    argv:
+      - brew
+      - list
+      - --formula
+      - "{{ package_name }}"
+  register: darwin_cli_package_checks
+  changed_when: false
+  failed_when: false
+  loop: "{{ darwin_cli_packages }}"
+  loop_control:
+    loop_var: package_name
+    label: "{{ package_name }}"
+
+- name: Install missing Homebrew CLI packages
+  ansible.builtin.command:
+    argv:
+      - brew
+      - install
+      - "{{ package_check.package_name }}"
+  loop: "{{ darwin_cli_package_checks.results }}"
+  loop_control:
+    loop_var: package_check
+    label: "{{ package_check.package_name }}"
+  when: package_check.rc != 0

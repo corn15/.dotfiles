@@ -1,0 +1,51 @@
+---
+- name: Inspect Homebrew desktop apps
+  ansible.builtin.shell: |
+    if brew list --cask "{{ desktop_app.name }}" >/dev/null 2>&1; then
+      echo "cask_installed=1"
+    else
+      echo "cask_installed=0"
+    fi
+
+    if [ -e "{{ desktop_app.app_path }}" ]; then
+      echo "app_exists=1"
+    else
+      echo "app_exists=0"
+    fi
+  register: darwin_desktop_app_checks
+  changed_when: false
+  failed_when: false
+  loop: "{{ darwin_desktop_apps }}"
+  loop_control:
+    loop_var: desktop_app
+    label: "{{ desktop_app.name }}"
+
+- name: Install missing Homebrew desktop apps
+  ansible.builtin.command:
+    argv:
+      - brew
+      - install
+      - --cask
+      - "{{ app_check.desktop_app.name }}"
+  loop: "{{ darwin_desktop_app_checks.results }}"
+  loop_control:
+    loop_var: app_check
+    label: "{{ app_check.desktop_app.name }}"
+  when:
+    - "'cask_installed=0' in app_check.stdout_lines"
+    - "'app_exists=0' in app_check.stdout_lines"
+
+- name: Reinstall Homebrew desktop apps with missing app bundles
+  ansible.builtin.command:
+    argv:
+      - brew
+      - reinstall
+      - --cask
+      - "{{ app_check.desktop_app.name }}"
+  loop: "{{ darwin_desktop_app_checks.results }}"
+  loop_control:
+    loop_var: app_check
+    label: "{{ app_check.desktop_app.name }}"
+  when:
+    - "'cask_installed=1' in app_check.stdout_lines"
+    - "'app_exists=0' in app_check.stdout_lines"

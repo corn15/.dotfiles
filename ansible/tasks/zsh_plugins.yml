@@ -1,0 +1,21 @@
+---
+- name: Resolve Zsh plugin directory
+  ansible.builtin.set_fact:
+    zsh_plugin_dir: "{{ ansible_facts['env']['ZSH_PLUGIN_DIR'] | default(((ansible_facts['env']['XDG_DATA_HOME'] | default(ansible_facts['env']['HOME'] + '/.local/share', true)) + '/zsh/plugins'), true) }}"
+
+- name: Ensure Zsh plugin directory exists
+  ansible.builtin.file:
+    path: "{{ zsh_plugin_dir }}"
+    state: directory
+    mode: "0755"
+
+- name: Install or update Zsh plugins
+  ansible.builtin.git:
+    repo: "{{ zsh_plugin.repo }}"
+    dest: "{{ zsh_plugin_dir }}/{{ zsh_plugin.name }}"
+    depth: 1
+    update: "{{ dotfiles_update_enabled }}"
+  loop: "{{ zsh_plugins }}"
+  loop_control:
+    loop_var: zsh_plugin
+    label: "{{ zsh_plugin.name }}"

@@ -1,0 +1,50 @@
+---
+- name: Check Zed
+  ansible.builtin.command: zed --version
+  register: zed_check
+  changed_when: false
+  failed_when: false
+  environment:
+    PATH: "{{ ansible_facts['env']['HOME'] }}/.local/bin:{{ ansible_facts['env']['PATH'] }}"
+
+- name: Install or update Zed on Ubuntu
+  ansible.builtin.shell: curl -f https://zed.dev/install.sh | sh
+  when: zed_check.rc != 0 or dotfiles_update_enabled
+
+- name: Ensure snapd is installed
+  ansible.builtin.apt:
+    name: snapd
+    state: present
+    update_cache: true
+  become: true
+
+- name: Check Ghostty snap
+  ansible.builtin.command:
+    argv:
+      - snap
+      - list
+      - ghostty
+  register: ghostty_snap_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Ghostty snap
+  ansible.builtin.command:
+    argv:
+      - snap
+      - install
+      - ghostty
+      - --classic
+  become: true
+  when: ghostty_snap_check.rc != 0
+
+- name: Refresh Ghostty snap
+  ansible.builtin.command:
+    argv:
+      - snap
+      - refresh
+      - ghostty
+  become: true
+  when:
+    - ghostty_snap_check.rc == 0
+    - dotfiles_update_enabled

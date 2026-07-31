@@ -1,60 +1,81 @@
 # .dotfiles
 
-Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/).
+Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/) and bootstrapped with Ansible.
 
-## Prerequisites
+## Profiles
+
+- `cli`: shell and command-line tools.
+- `desktop`: everything in `cli`, plus desktop apps managed by this repo.
+
+## Install
+
+From the repo root, run the full setup:
+
+```bash
+./setup.sh --profile desktop
+```
+
+For a CLI-only machine:
+
+```bash
+./setup.sh --profile cli
+```
+
+This will:
+
+1. Install Ansible if it is missing.
+2. Install tools for the selected profile.
+3. Ask whether to make `zsh` your default shell.
+4. Symlink configs into `$HOME` using `stow`.
+
+You can also run the phases separately:
+
+```bash
+./install.sh --profile desktop
+zsh bootstrap.sh
+```
+
+## Tools
+
+The `cli` profile installs:
 
 - `git`
 - `zsh`
 - `stow`
-- Apps you want to manage here, such as `ghostty`, `zed`, and `zellij`
+- `curl`
+- `zoxide`
+- `bat`
+- `ripgrep`
+- `starship`
+- `zellij`
+- `mise`
+- standalone Zsh plugins used by `zsh/.config/zsh/plugins.sh`
 
-## Install
+The `desktop` profile also installs:
 
-From the repo root:
+- `zed`
+- `ghostty`
 
-1. Install (or update) Starship and standalone Zsh plugins:
+## Update
 
-   ```bash
-   zsh install.sh
-   ```
+Refresh standalone tools and Zsh plugins:
 
-   This will install/update Starship and clone/update:
-   - `starship` into the current `starship` binary directory, or `/usr/local/bin` by default
-   - `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins/zsh-completions`
-   - `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins/zsh-autosuggestions`
-   - `${XDG_DATA_HOME:-~/.local/share}/zsh/plugins/zsh-syntax-highlighting`
+```bash
+./install.sh --profile desktop --update
+```
 
-2. Symlink configs into `$HOME` using stow:
+Then refresh dotfile symlinks if needed:
 
-   ```bash
-   zsh bootstrap.sh
-   ```
+```bash
+zsh bootstrap.sh
+```
 
-   This will prompt for each available package and can now also install `zellij/.config/zellij/config.kdl`.
-
-   If `stow` reports conflicts, it means you already have files/directories at the target paths.
-   Move them aside (or remove them) and re-run `bootstrap.sh`.
-
-3. Restart your shell:
-
-   ```bash
-   exec zsh
-   ```
+Package-manager updates are still owned by each platform package manager, such as `brew`, `apt`, or `snap`.
 
 ## Notes
 
 - `zsh/.config/zsh/plugins.sh` adds `zsh-completions` to `fpath`, runs `compinit`, and sources the standalone Zsh plugins.
-- `zed/.config/zed/bin/terminal-wrapper` will auto-attach to a per-project `zellij` session when
-  `zellij` is installed. The default `zellij` config lives at `zellij/.config/zellij/config.kdl`.
-
-## Update
-
-```bash
-git pull
-zsh install.sh
-zsh bootstrap.sh
-```
+- Machine-local Zsh config can live in `~/.config/zsh/local.sh`; see `zsh/.config/zsh/local.sh.example`.
 
 ## Uninstall
 

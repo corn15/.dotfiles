@@ -1,0 +1,39 @@
+---
+darwin_cli_packages:
+  - git
+  - zsh
+  - stow
+  - curl
+  - zoxide
+  - zellij
+  - bat
+  - ripgrep
+  - starship
+  - mise
+
+darwin_desktop_apps:
+  - name: zed
+    app_path: /Applications/Zed.app
+  - name: ghostty
+    app_path: /Applications/Ghostty.app
+
+ubuntu_cli_packages:
+  - git
+  - zsh
+  - stow
+  - curl
+  - zoxide
+  - bat
+  - ripgrep
+
+ubuntu_desktop_apps:
+  - zed
+  - ghostty
+
+zsh_plugins:
+  - name: zsh-completions
+    repo: https://github.com/zsh-users/zsh-completions.git
+  - name: zsh-autosuggestions
+    repo: https://github.com/zsh-users/zsh-autosuggestions.git
+  - name: zsh-syntax-highlighting
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git

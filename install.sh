@@ -1,72 +1,114 @@
-#!/usr/bin/env zsh
-set -euo pipefail
+#!/bin/sh
+set -eu
 
-# Install (or update) Starship and standalone Zsh plugins used by this dotfiles setup.
+ROOT_DIR=$(CDPATH= cd "$(dirname "$0")" && pwd)
+. "$ROOT_DIR/lib/common.sh"
 
-ZSH_PLUGIN_DIR="${ZSH_PLUGIN_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins}"
-PLUGINS=(
-  zsh-completions
-  zsh-autosuggestions
-  zsh-syntax-highlighting
-)
+usage() {
+  cat <<'USAGE'
+Usage: ./install.sh [--profile cli|desktop] [--update]
 
-require_cmd() {
-  command -v "$1" >/dev/null 2>&1 || {
-    echo "error: missing required command: $1" >&2
-    exit 1
-  }
+Install tools required by these dotfiles.
+
+Options:
+  --profile cli|desktop  Tool profile to install. Defaults to cli.
+  --update               Refresh standalone tools and Zsh plugins.
+  -h, --help             Show this help message.
+USAGE
 }
 
-clone_or_update() {
-  local repo="$1"
-  local dest="$2"
+install_homebrew() {
+  command -v curl >/dev/null 2>&1 || error "curl is required to install Homebrew"
 
-  if [ -d "$dest/.git" ]; then
-    git -C "$dest" pull --ff-only
-    return
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  add_homebrew_to_path
+}
+
+ensure_ansible_on_macos() {
+  add_homebrew_to_path
+
+  if ! command -v brew >/dev/null 2>&1; then
+    if prompt_yn "Homebrew is required to install Ansible on macOS. Install Homebrew?" 0; then
+      install_homebrew
+    else
+      error "Homebrew is required to install Ansible on macOS"
+    fi
   fi
 
-  if [ -e "$dest" ]; then
-    echo "error: $dest exists but is not a git repo; please move it aside and re-run" >&2
-    exit 1
+  if ! command -v ansible-playbook >/dev/null 2>&1; then
+    brew install ansible
+  fi
+}
+
+ensure_ansible_on_ubuntu() {
+  if command -v ansible-playbook >/dev/null 2>&1; then
+    return 0
   fi
 
-  git clone --depth=1 "$repo" "$dest"
+  command -v sudo >/dev/null 2>&1 || error "sudo is required to install Ansible on Ubuntu"
+  sudo apt-get update
+  sudo apt-get install -y ansible
 }
 
-starship_bin_dir() {
-  if [ -n "${STARSHIP_BIN_DIR:-}" ]; then
-    printf '%s\n' "$STARSHIP_BIN_DIR"
-    return
-  fi
+ensure_ansible() {
+  os_name=$(uname -s)
+  case "$os_name" in
+    Darwin)
+      ensure_ansible_on_macos
+      ;;
+    Linux)
+      if [ -r /etc/os-release ]; then
+        . /etc/os-release
+      else
+        error "cannot detect Linux distribution"
+      fi
 
-  if command -v starship >/dev/null 2>&1; then
-    dirname -- "$(command -v starship)"
-    return
-  fi
+      if [ "${ID:-}" = "ubuntu" ]; then
+        ensure_ansible_on_ubuntu
+      else
+        error "only Ubuntu is supported for Linux installs"
+      fi
+      ;;
+    *)
+      error "unsupported OS: $os_name"
+      ;;
+  esac
 
-  printf '%s\n' "/usr/local/bin"
+  command -v ansible-playbook >/dev/null 2>&1 || error "ansible-playbook is still unavailable after installation"
 }
 
-install_starship() {
-  require_cmd curl
+profile="cli"
+dotfiles_update="false"
 
-  local bin_dir=""
-  bin_dir="$(starship_bin_dir)"
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --profile)
+      [ "$#" -ge 2 ] || error "--profile requires cli or desktop"
+      profile="$2"
+      shift 2
+      ;;
+    --update)
+      dotfiles_update="true"
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      error "unknown option: $1"
+      ;;
+  esac
+done
 
-  curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$bin_dir"
-}
+validate_profile "$profile"
 
-main() {
-  require_cmd git
-  install_starship
+PLAYBOOK="$ROOT_DIR/ansible/playbook.yml"
 
-  mkdir -p "$ZSH_PLUGIN_DIR"
+ensure_ansible
 
-  local plugin=""
-  for plugin in "${PLUGINS[@]}"; do
-    clone_or_update "https://github.com/zsh-users/${plugin}" "$ZSH_PLUGIN_DIR/${plugin}"
-  done
-}
-
-main "$@"
+if [ "$(uname -s)" = "Linux" ] && ! sudo -n true 2>/dev/null; then
+  ansible-playbook -i localhost, --ask-become-pass "$PLAYBOOK" --extra-vars "profile=$profile dotfiles_update=$dotfiles_update"
+else
+  ansible-playbook -i localhost, "$PLAYBOOK" --extra-vars "profile=$profile dotfiles_update=$dotfiles_update"
+fi
