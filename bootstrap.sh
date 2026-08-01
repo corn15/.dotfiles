@@ -15,9 +15,9 @@ prompt_value() {
 
   while true; do
     if [ -n "$default_value" ]; then
-      printf "%s [%s]: " "$prompt" "$default_value"
+      printf "%s [%s]: " "$prompt" "$default_value" >&2
     else
-      printf "%s: " "$prompt"
+      printf "%s: " "$prompt" >&2
     fi
 
     IFS= read -r value || return 1
